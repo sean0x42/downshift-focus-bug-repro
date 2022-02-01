@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useCombobox } from 'downshift';
+import React, { useState } from 'react'
+import { useCombobox } from 'downshift'
 
 const items = [
   'Apples',
@@ -10,40 +10,72 @@ const items = [
   'Apple sauce',
 ];
 
-const Home = () => {
-  const [inputItems, setItems] = useState(items);
+const menuStyles = {
+  listStyleType: "none",
+  margin: 0,
+  padding: 0
+}
 
-  const { isOpen, getComboboxProps, getInputProps, getMenuProps, getItemProps, getLabelProps } = useCombobox({
+const baseItemStyles = {
+  padding: '10px'
+}
+
+function DropdownCombobox() {
+  const [inputItems, setInputItems] = useState(items)
+
+  const {
+    isOpen,
+    getToggleButtonProps,
+    getLabelProps,
+    getMenuProps,
+    getInputProps,
+    getComboboxProps,
+    highlightedIndex,
+    getItemProps,
+  } = useCombobox({
     items: inputItems,
-    onInputValueChange: ({ inputValue }) =>
-      setItems(items.filter((item) => item.toLowerCase().startsWith(inputValue?.toLowerCase() ?? ''))),
-    stateReducer: (state, changes) => {
-      console.debug({ state, changes })
-      return changes.changes
-    }
-  });
+    onInputValueChange: ({ inputValue }) => {
+      setInputItems(
+        items.filter(item =>
+          item.toLowerCase().startsWith(inputValue.toLowerCase()),
+        ),
+      )
+    },
+  })
 
   return (
-    <div style={{ margin: '8rem 2rem' }}>
+    <div>
+      <label {...getLabelProps()}>Choose an apple:</label>
       <div {...getComboboxProps()}>
-        <label {...getLabelProps()}>Choose an apple related string:</label>
-        <input type="text" formMode="white" {...getInputProps()} />
+        <input {...getInputProps()} />
+        <button
+          type="button"
+          {...getToggleButtonProps()}
+          aria-label="toggle menu"
+        >
+          &#8595;
+        </button>
       </div>
-
-      <ul {...getMenuProps()} style={{ padding: 0, margin: 0, listStyleType: "none" }}>
+      <ul {...getMenuProps()} style={menuStyles}>
         {isOpen &&
           inputItems.map((item, index) => (
-            <li key={`${item}${index}`} {...getItemProps({ item, index })} style={{ background: '#fafafa', padding: '10px' }}>
+            <li
+              style={
+                highlightedIndex === index
+                  ? { ...baseItemStyles, backgroundColor: '#bde4ff' }
+                  : { ...baseItemStyles }
+              }
+              key={`${item}${index}`}
+              {...getItemProps({ item, index })}
+            >
               {item}
             </li>
           ))}
       </ul>
 
-      <p style={{ marginTop: '10rem' }}>Some extra content to make sure the viewport is scrollable.</p>
-      <p style={{ marginTop: '10rem' }}>Some extra content to make sure the viewport is scrollable.</p>
-      <p style={{ marginTop: '10rem' }}>Some extra content to make sure the viewport is scrollable.</p>
-    </div >
-  );
-};
+      <p style={{ marginTop: '50rem' }}>Some extra content to make sure the viewport is scrollable.</p>
+    </div>
+  )
+}
 
-export default Home;
+export default DropdownCombobox
