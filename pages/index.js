@@ -41,6 +41,10 @@ function DropdownCombobox() {
         ),
       )
     },
+    stateReducer: (state, { type, changes }) => {
+      console.debug({ state, type, changes })
+      return changes
+    }
   })
 
   return (
